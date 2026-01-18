@@ -11,5 +11,7 @@ def api_home(request,*args,**kwargs):
     data['price']=model_data.price
     #model instance (model data)
     #turn a python dict
-    #return json response
+    #return json respons
+    
+
   return JsonResponse(data)
