@@ -5,8 +5,11 @@ class ProductSerializer(serializers.ModelSerializer):
   my_discount=serializers.SerializerMethodField(read_only=True)
   class Meta:
     model = Product
-    fields = ['id','title', 'content', 'price','sale_price','get_discount_price','my_discount']
+    fields = ['id','title', 'content', 'price','sale_price','my_discount']
 
   def get_my_discount(self,obj):
-    print(obj.id)
+    if not hasattr(obj,'get_discount_price'):
+      return None
+    if not isinstance(obj,Product):
+      return None
     return obj.get_discount_price()
