@@ -2,6 +2,7 @@ from rest_framework import generics
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework import mixins,permissions,authentication
+from .permissions import IsStaffEditorPermission
 
 #generics view
 # class ProductListCreate(generics.ListCreateAPIView):
@@ -35,7 +36,7 @@ class ProductListCreateView(mixins.ListModelMixin,mixins.CreateModelMixin,generi
   queryset=Product.objects.all()
   serializer_class=ProductSerializer
   authentication_classes=[authentication.SessionAuthentication]
-  permission_classes=[permissions.DjangoModelPermissions]
+  permission_classes=[permissions.IsAdminUser,IsStaffEditorPermission]
 
   def get(self,request,*args,**kwargs):
     return self.list(request,*args,**kwargs)  
