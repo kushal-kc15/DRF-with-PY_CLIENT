@@ -35,7 +35,7 @@ class ProductListCreateView(mixins.ListModelMixin,mixins.CreateModelMixin,generi
   queryset=Product.objects.all()
   serializer_class=ProductSerializer
   authentication_classes=[authentication.SessionAuthentication]
-  permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+  permission_classes=[permissions.DjangoModelPermissions]
 
   def get(self,request,*args,**kwargs):
     return self.list(request,*args,**kwargs)  
@@ -49,6 +49,7 @@ class ProductRetrieveUpdateDestroyView(mixins.RetrieveModelMixin,mixins.UpdateMo
   queryset=Product.objects.all()
   serializer_class=ProductSerializer
   lookup_field="pk"
+  
 
   def get(self,request,*args,**kwargs):
     return self.retrieve(request,*args,**kwargs)  
