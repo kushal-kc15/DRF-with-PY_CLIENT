@@ -3,15 +3,18 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 # from django.http import Http404
 from django.shortcuts import get_object_or_404
-from api.mixins import StaffEditorPermissionMixin
+from api.mixins import StaffEditorPermissionMixin,UserQuerySetMixin
 from .models import Product
 from .serializers import ProductSerializer
 
 class ProductListCreateAPIView(
     StaffEditorPermissionMixin,
+    UserQuerySetMixin,
     generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+   
+    
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
@@ -19,13 +22,21 @@ class ProductListCreateAPIView(
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user,content=content)
         # send a Django signal
-
+    # def get_queryset(self):
+    #     qs=super().get_queryset()
+    #     request=self.request
+    #     user=request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=user)
+        
 product_list_create_view = ProductListCreateAPIView.as_view()
 
 class ProductDetailAPIView(    
     StaffEditorPermissionMixin,
+    UserQuerySetMixin,
     generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -51,6 +62,7 @@ product_update_view = ProductUpdateAPIView.as_view()
 
 
 class ProductDestroyAPIView(
+    UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.DestroyAPIView):
     queryset = Product.objects.all()

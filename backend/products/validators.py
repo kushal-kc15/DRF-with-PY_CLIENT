@@ -8,8 +8,8 @@ from rest_framework.validators import UniqueValidator
 #     return value
 def validate_title_no_hello(value):
     if "hello" in value:
-        raise serializers.ValidationError("Hello is not allowed")
+        raise serializers.ValidationError(f"{value} is not allowed")
     return value
 
 
-unique_product_title=UniqueValidator(queryset=Product.objects.all(),message="This title has already been used")
+unique_product_title=UniqueValidator(queryset=Product.objects.all(),message="This title has already been used",lookup='iexact')
