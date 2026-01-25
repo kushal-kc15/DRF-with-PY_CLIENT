@@ -1,16 +1,15 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
 from .models import Product
 from .serializers import ProductSerializer
-from .permissions import IsStaffEditorPermission
+from api.mixins import StaffEditorPermissionMixin
 
-class ProductListCreateView(generics.ListCreateAPIView):
+class ProductListCreateView(generics.ListCreateAPIView,StaffEditorPermissionMixin):
     """
     Handles List (GET) and Create (POST) operations.
     Restricted to Staff Editors.
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         # Auto-fill content with title if it's not provided
@@ -18,7 +17,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
         content = serializer.validated_data.get("content") or title
         serializer.save(content=content)
 
-class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView,StaffEditorPermissionMixin):
     """
     Handles Retrieve (GET), Update (PUT/PATCH), and Destroy (DELETE) operations.
     Using 'pk' as the lookup field.
@@ -26,7 +25,6 @@ class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "pk"
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def perform_update(self, serializer):
         instance = serializer.save()
